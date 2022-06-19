@@ -1,5 +1,5 @@
 import requests
-from flight_data import FlightData
+from flight_schema import FlightSchema
 from dotenv import load_dotenv
 import os
 load_dotenv()
@@ -51,7 +51,7 @@ class FlightSearch:
             print(f"No flights found for {destination_city_code}.")
             return None
 
-        flight_data = FlightData(
+        flight_data = FlightSchema(
             price=data["price"],
             origin_city=data["route"][0]["cityFrom"],
             origin_airport=data["route"][0]["flyFrom"],
