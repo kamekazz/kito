@@ -20,18 +20,18 @@ class FlightSearch:
         code = results[0]["code"]
         return code
 
-    def check_flights(self, origin_city_code, destination_city_code, from_time, to_time):
+    def check_flights(self, fly_from, fly_to, date_from, date_to, nights):
         headers = {"apikey": TEQUILA_API_KEY}
         query = {
-            "fly_from": origin_city_code,
-            "fly_to": destination_city_code,
+            "fly_from": fly_from,
+            "fly_to": fly_to,
             # "date_from": from_time.strftime("%d/%m/%Y"),
             # "date_to": to_time.strftime("%d/%m/%Y"),
 
-            "date_from": "19/12/2022",
-            "date_to": "1/1/2023",
-            "nights_in_dst_from": 7,
-            "nights_in_dst_to": 10,
+            "date_from": date_from,
+            "date_to": date_to,
+            "nights_in_dst_from": nights,
+            "nights_in_dst_to": nights,
             "flight_type": "round",
             "one_for_city": 1,
             "max_stopovers": 0,
@@ -46,9 +46,8 @@ class FlightSearch:
 
         try:
             data = response.json()["data"][0]
-            print(data)
         except IndexError:
-            print(f"No flights found for {destination_city_code}.")
+            print(f"No flights found for {date_to}.")
             return None
 
         flight_data = FlightSchema(
@@ -58,7 +57,9 @@ class FlightSearch:
             destination_city=data["route"][0]["cityTo"],
             destination_airport=data["route"][0]["flyTo"],
             out_date=data["route"][0]["local_departure"].split("T")[0],
-            return_date=data["route"][1]["local_departure"].split("T")[0]
+            return_date=data["route"][1]["local_departure"].split("T")[0],
+            buy_url=data["deep_link"]
         )
-        print(f" {flight_data.destination_city}: ${flight_data.price}")
+        print(
+            f"{flight_data.destination_city}: ${flight_data.price} \n  sale el dia :{flight_data.out_date} y vuelve el dia:{flight_data.return_date} \n Para compra:{flight_data.buy_url}")
         return flight_data
